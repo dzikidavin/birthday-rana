@@ -6,157 +6,112 @@
 <title>Happy Birthday</title>
 
 <style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(to top, #fdf0f4, #ffffff);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+body{
+  margin:0;
+  height:100vh;
+  background: radial-gradient(circle at bottom, #fde7ee, #ffffff);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
   font-family: system-ui, sans-serif;
 }
 
 /* INTRO */
-#intro {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 28px;
-  z-index: 10;
+#intro{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:24px;
+  z-index:5;
 }
 
-#intro h1 {
-  font-size: 34px;
-  color: #e2557b;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+#intro h1{
+  font-size:36px;
+  color:#e0456f;
+  font-weight:500;
 }
 
-#intro button {
-  padding: 14px 44px;
-  border-radius: 50px;
-  border: none;
-  background: #e2557b;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
+#intro button{
+  padding:14px 46px;
+  border-radius:50px;
+  border:none;
+  background:#e0456f;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
 }
 
-.fade {
-  animation: fadeOut 1.2s ease forwards;
+.fade{
+  animation:fadeOut 1.2s ease forwards;
 }
 
-@keyframes fadeOut {
-  to { opacity: 0; }
+@keyframes fadeOut{ to{opacity:0;} }
+
+/* SCENE */
+.scene{
+  position:absolute;
+  bottom:-600px;
+  display:none;
+  animation:rise 4s cubic-bezier(.22,.61,.36,1) forwards;
 }
 
-/* FLOWER CONTAINER */
-.scene {
-  position: absolute;
-  bottom: -420px;
-  animation: rise 4s ease-out forwards;
-  display: none;
-}
-
-@keyframes rise {
-  to { bottom: 0; }
-}
+@keyframes rise{ to{bottom:0;} }
 
 /* STEM */
-.stem {
-  width: 6px;
-  height: 0;
-  background: linear-gradient(to top, #2f6f3a, #7fcf9a);
-  border-radius: 6px;
-  margin: auto;
-  animation: growStem 3s ease-out forwards;
+.stem{
+  width:6px;
+  height:380px;
+  margin:auto;
+  background:linear-gradient(to top,#2f6f3a,#8fd8aa);
+  border-radius:6px;
 }
 
-@keyframes growStem {
-  to { height: 340px; }
+/* SVG */
+svg{
+  width:420px;
+  height:360px;
+  overflow:visible;
+  margin-top:-40px;
 }
 
-/* BUD */
-.bud {
-  width: 42px;
-  height: 72px;
-  background: linear-gradient(to top, #fff, #ffe4ec);
-  border-radius: 50%;
-  margin: -10px auto 0;
-  transform: scale(0);
-  animation: budIn 1.2s ease forwards 3s,
-             budOut 1s ease forwards 4.6s;
+.flower{
+  transform-origin:50% 70%;
+  transform:scale(0);
+  animation:flowerIn 1.2s ease forwards;
 }
 
-@keyframes budIn {
-  to { transform: scale(1); }
+.f1{animation-delay:4.6s}
+.f2{animation-delay:5.1s}
+.f3{animation-delay:5.6s}
+.f4{animation-delay:6.1s}
+.f5{animation-delay:6.6s}
+
+@keyframes flowerIn{
+  to{transform:scale(1);}
 }
 
-@keyframes budOut {
-  to { transform: scale(0); opacity: 0; }
+.petal{
+  transform-origin:50% 100%;
+  transform:scaleY(0);
+  animation:petalOpen 1.4s ease forwards;
 }
 
-/* FLOWER */
-.flower {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  margin: -30px auto 0;
-  filter: drop-shadow(0 0 0 rgba(255,255,255,0));
-  animation: glow 2s ease forwards 7.2s;
+@keyframes petalOpen{
+  to{transform:scaleY(1);}
 }
 
-@keyframes glow {
-  to { filter: drop-shadow(0 0 28px rgba(255,180,200,0.7)); }
+.glow{
+  filter:drop-shadow(0 0 26px rgba(255,180,200,.65));
+  opacity:0;
+  animation:glowIn 1.2s ease forwards 7.2s;
 }
 
-/* PETALS */
-.petal {
-  position: absolute;
-  width: 52px;
-  height: 120px;
-  background: radial-gradient(circle at top, #fff, #ffe6ee);
-  border-radius: 50%;
-  top: 26px;
-  left: 64px;
-  transform-origin: bottom center;
-  opacity: 0;
-  animation: bloom 1.4s ease forwards;
-}
-
-.petal:nth-child(1){--r:0deg;animation-delay:5s}
-.petal:nth-child(2){--r:55deg;animation-delay:5.4s}
-.petal:nth-child(3){--r:110deg;animation-delay:5.8s}
-.petal:nth-child(4){--r:165deg;animation-delay:6.2s}
-.petal:nth-child(5){--r:220deg;animation-delay:6.6s}
-.petal:nth-child(6){--r:275deg;animation-delay:7s}
-
-@keyframes bloom {
-  to {
-    opacity: 1;
-    transform: rotate(var(--r)) scale(1);
-  }
-}
-
-/* CENTER */
-.center {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, #ffd27d, #e7b34a);
-  border-radius: 50%;
-  top: 80px;
-  left: 80px;
-  opacity: 0;
-  animation: centerIn 1s ease forwards 7.6s;
-}
-
-@keyframes centerIn {
-  to { opacity: 1; }
+@keyframes glowIn{
+  to{opacity:1;}
 }
 </style>
 </head>
@@ -169,29 +124,50 @@ body {
 </div>
 
 <div class="scene" id="scene">
-  <div class="bud"></div>
-
-  <div class="flower">
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="center"></div>
-  </div>
-
   <div class="stem"></div>
+
+  <svg viewBox="0 0 420 360" class="glow">
+    <!-- CENTER BIG -->
+    <g class="flower f1" transform="translate(160,20) scale(1.25)">
+      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
+      <path class="petal" d="M50 20 C90 80,90 140,50 200 C10 140,10 80,50 20" fill="#ffe9f0"/>
+      <circle cx="50" cy="110" r="8" fill="#f2c14d"/>
+    </g>
+
+    <!-- LEFT -->
+    <g class="flower f2" transform="translate(40,80) scale(0.9)">
+      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
+      <circle cx="50" cy="110" r="7" fill="#f2c14d"/>
+    </g>
+
+    <!-- RIGHT -->
+    <g class="flower f3" transform="translate(280,80) scale(0.9)">
+      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
+      <circle cx="50" cy="110" r="7" fill="#f2c14d"/>
+    </g>
+
+    <!-- BACK LEFT -->
+    <g class="flower f4" transform="translate(90,150) scale(0.75)">
+      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
+      <circle cx="50" cy="110" r="6" fill="#f2c14d"/>
+    </g>
+
+    <!-- BACK RIGHT -->
+    <g class="flower f5" transform="translate(230,150) scale(0.75)">
+      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
+      <circle cx="50" cy="110" r="6" fill="#f2c14d"/>
+    </g>
+  </svg>
 </div>
 
 <script>
-function start() {
-  const intro = document.getElementById("intro");
+function start(){
+  const intro=document.getElementById("intro");
   intro.classList.add("fade");
-  setTimeout(() => {
-    intro.style.display = "none";
-    document.getElementById("scene").style.display = "block";
-  }, 1200);
+  setTimeout(()=>{
+    intro.style.display="none";
+    document.getElementById("scene").style.display="block";
+  },1200);
 }
 </script>
 
