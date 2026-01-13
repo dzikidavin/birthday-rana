@@ -6,112 +6,43 @@
 <title>Happy Birthday</title>
 
 <style>
-body{
-  margin:0;
-  height:100vh;
-  background: radial-gradient(circle at bottom, #fde7ee, #ffffff);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
+html, body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at bottom, #2b0f1a, #000);
+  overflow: hidden;
   font-family: system-ui, sans-serif;
 }
 
-/* INTRO */
-#intro{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:24px;
-  z-index:5;
+#intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  z-index: 10;
 }
 
-#intro h1{
-  font-size:36px;
-  color:#e0456f;
-  font-weight:500;
+#intro h1 {
+  color: #ffd6e3;
+  font-size: 36px;
+  font-weight: 500;
 }
 
-#intro button{
-  padding:14px 46px;
-  border-radius:50px;
-  border:none;
-  background:#e0456f;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
+#intro button {
+  padding: 14px 44px;
+  border-radius: 50px;
+  border: none;
+  background: #e0456f;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.fade{
-  animation:fadeOut 1.2s ease forwards;
-}
-
-@keyframes fadeOut{ to{opacity:0;} }
-
-/* SCENE */
-.scene{
-  position:absolute;
-  bottom:-600px;
-  display:none;
-  animation:rise 4s cubic-bezier(.22,.61,.36,1) forwards;
-}
-
-@keyframes rise{ to{bottom:0;} }
-
-/* STEM */
-.stem{
-  width:6px;
-  height:380px;
-  margin:auto;
-  background:linear-gradient(to top,#2f6f3a,#8fd8aa);
-  border-radius:6px;
-}
-
-/* SVG */
-svg{
-  width:420px;
-  height:360px;
-  overflow:visible;
-  margin-top:-40px;
-}
-
-.flower{
-  transform-origin:50% 70%;
-  transform:scale(0);
-  animation:flowerIn 1.2s ease forwards;
-}
-
-.f1{animation-delay:4.6s}
-.f2{animation-delay:5.1s}
-.f3{animation-delay:5.6s}
-.f4{animation-delay:6.1s}
-.f5{animation-delay:6.6s}
-
-@keyframes flowerIn{
-  to{transform:scale(1);}
-}
-
-.petal{
-  transform-origin:50% 100%;
-  transform:scaleY(0);
-  animation:petalOpen 1.4s ease forwards;
-}
-
-@keyframes petalOpen{
-  to{transform:scaleY(1);}
-}
-
-.glow{
-  filter:drop-shadow(0 0 26px rgba(255,180,200,.65));
-  opacity:0;
-  animation:glowIn 1.2s ease forwards 7.2s;
-}
-
-@keyframes glowIn{
-  to{opacity:1;}
+canvas {
+  display: block;
 }
 </style>
 </head>
@@ -123,52 +54,94 @@ svg{
   <button onclick="start()">Klik</button>
 </div>
 
-<div class="scene" id="scene">
-  <div class="stem"></div>
-
-  <svg viewBox="0 0 420 360" class="glow">
-    <!-- CENTER BIG -->
-    <g class="flower f1" transform="translate(160,20) scale(1.25)">
-      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
-      <path class="petal" d="M50 20 C90 80,90 140,50 200 C10 140,10 80,50 20" fill="#ffe9f0"/>
-      <circle cx="50" cy="110" r="8" fill="#f2c14d"/>
-    </g>
-
-    <!-- LEFT -->
-    <g class="flower f2" transform="translate(40,80) scale(0.9)">
-      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
-      <circle cx="50" cy="110" r="7" fill="#f2c14d"/>
-    </g>
-
-    <!-- RIGHT -->
-    <g class="flower f3" transform="translate(280,80) scale(0.9)">
-      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
-      <circle cx="50" cy="110" r="7" fill="#f2c14d"/>
-    </g>
-
-    <!-- BACK LEFT -->
-    <g class="flower f4" transform="translate(90,150) scale(0.75)">
-      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
-      <circle cx="50" cy="110" r="6" fill="#f2c14d"/>
-    </g>
-
-    <!-- BACK RIGHT -->
-    <g class="flower f5" transform="translate(230,150) scale(0.75)">
-      <path class="petal" d="M50 20 C20 80,20 140,50 200 C80 140,80 80,50 20" fill="#fff"/>
-      <circle cx="50" cy="110" r="6" fill="#f2c14d"/>
-    </g>
-  </svg>
-</div>
+<canvas id="c"></canvas>
 
 <script>
-function start(){
-  const intro=document.getElementById("intro");
-  intro.classList.add("fade");
-  setTimeout(()=>{
-    intro.style.display="none";
-    document.getElementById("scene").style.display="block";
-  },1200);
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+resize();
+
+window.addEventListener("resize", resize);
+
+let t = 0;
+let started = false;
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
+
+function drawStem(progress) {
+  ctx.strokeStyle = "#3fa66a";
+  ctx.lineWidth = 10;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(canvas.width/2, canvas.height);
+  ctx.lineTo(canvas.width/2, canvas.height - progress * 400);
+  ctx.stroke();
+}
+
+function drawPetal(x, y, angle, open) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.scale(open, open);
+
+  const g = ctx.createRadialGradient(0, -20, 10, 0, -40, 90);
+  g.addColorStop(0, "#fff");
+  g.addColorStop(1, "#ffb7cd");
+
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(-40, -60, -20, -120, 0, -150);
+  ctx.bezierCurveTo(20, -120, 40, -60, 0, 0);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawFlower(x, y, open) {
+  const petals = 6;
+  for (let i = 0; i < petals; i++) {
+    drawPetal(x, y, (Math.PI*2/petals)*i, open);
+  }
+
+  ctx.fillStyle = "#ffd27d";
+  ctx.beginPath();
+  ctx.arc(x, y-30, 12, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (started) {
+    t += 0.008;
+
+    const stemGrow = Math.min(t*1.2, 1);
+    drawStem(stemGrow);
+
+    if (t > 0.8) {
+      const open = Math.min((t-0.8)*1.4, 1);
+      const baseY = canvas.height - 400;
+
+      drawFlower(canvas.width/2, baseY, open);
+      drawFlower(canvas.width/2 - 120, baseY + 40, open*0.9);
+      drawFlower(canvas.width/2 + 120, baseY + 40, open*0.9);
+      drawFlower(canvas.width/2 - 60, baseY + 100, open*0.8);
+      drawFlower(canvas.width/2 + 60, baseY + 100, open*0.8);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function start() {
+  document.getElementById("intro").style.display = "none";
+  started = true;
+}
+
+animate();
 </script>
 
 </body>
