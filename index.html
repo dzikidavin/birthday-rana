@@ -1,148 +1,180 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Happy Birthday Khairana</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday</title>
-
 <style>
 html, body {
   margin: 0;
   padding: 0;
-  background: radial-gradient(circle at bottom, #2b0f1a, #000);
+  background: #000;
   overflow: hidden;
   font-family: system-ui, sans-serif;
 }
-
-#intro {
-  position: absolute;
+#overlay {
+  position: fixed;
   inset: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 28px;
-  z-index: 10;
-}
-
-#intro h1 {
-  color: #ffd6e3;
-  font-size: 36px;
-  font-weight: 500;
-}
-
-#intro button {
-  padding: 14px 44px;
-  border-radius: 50px;
-  border: none;
-  background: #e0456f;
+  justify-content: center;
   color: white;
-  font-size: 16px;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  background: radial-gradient(circle at center, #111 0%, #000 70%);
   cursor: pointer;
+  z-index: 10;
+  transition: opacity 1.2s ease;
 }
-
-canvas {
-  display: block;
+#overlay.hide {
+  opacity: 0;
+  pointer-events: none;
 }
 </style>
 </head>
-
 <body>
 
-<div id="intro">
-  <h1>Happy Birthday Khairana!</h1>
-  <button onclick="start()">Klik</button>
-</div>
+<div id="overlay">Happy Birthday Khairana!</div>
 
-<canvas id="c"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
 <script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
-resize();
+/* SCENE */
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 6, 20);
 
-window.addEventListener("resize", resize);
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0, 2.5, 7);
 
-let t = 0;
-let started = false;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+/* POST PROCESSING (THE MAGIC) */
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene, camera));
 
-function drawStem(progress) {
-  ctx.strokeStyle = "#3fa66a";
-  ctx.lineWidth = 10;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(canvas.width/2, canvas.height);
-  ctx.lineTo(canvas.width/2, canvas.height - progress * 400);
-  ctx.stroke();
-}
+const bloomPass = new THREE.UnrealBloomPass(
+  new THREE.Vector2(innerWidth, innerHeight),
+  1.2,
+  0.6,
+  0.85
+);
+composer.addPass(bloomPass);
 
-function drawPetal(x, y, angle, open) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle);
-  ctx.scale(open, open);
+/* LIGHTING */
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
 
-  const g = ctx.createRadialGradient(0, -20, 10, 0, -40, 90);
-  g.addColorStop(0, "#fff");
-  g.addColorStop(1, "#ffb7cd");
+const key = new THREE.DirectionalLight(0xffe8f2, 1.6);
+key.position.set(4, 6, 3);
+scene.add(key);
 
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(-40, -60, -20, -120, 0, -150);
-  ctx.bezierCurveTo(20, -120, 40, -60, 0, 0);
-  ctx.fill();
-  ctx.restore();
-}
+const rim = new THREE.DirectionalLight(0xffb7d5, 1.0);
+rim.position.set(-4, 2, -3);
+scene.add(rim);
 
-function drawFlower(x, y, open) {
-  const petals = 6;
-  for (let i = 0; i < petals; i++) {
-    drawPetal(x, y, (Math.PI*2/petals)*i, open);
-  }
+/* FLOWER GROUP */
+const flower = new THREE.Group();
+flower.position.y = -4;
+scene.add(flower);
 
-  ctx.fillStyle = "#ffd27d";
-  ctx.beginPath();
-  ctx.arc(x, y-30, 12, 0, Math.PI*2);
-  ctx.fill();
-}
+/* STEM */
+const stem = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.08, 0.12, 4.8, 24),
+  new THREE.MeshStandardMaterial({ color: 0x2f6f4f, roughness: 0.6 })
+);
+stem.position.y = 2;
+flower.add(stem);
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (started) {
-    t += 0.008;
-
-    const stemGrow = Math.min(t*1.2, 1);
-    drawStem(stemGrow);
-
-    if (t > 0.8) {
-      const open = Math.min((t-0.8)*1.4, 1);
-      const baseY = canvas.height - 400;
-
-      drawFlower(canvas.width/2, baseY, open);
-      drawFlower(canvas.width/2 - 120, baseY + 40, open*0.9);
-      drawFlower(canvas.width/2 + 120, baseY + 40, open*0.9);
-      drawFlower(canvas.width/2 - 60, baseY + 100, open*0.8);
-      drawFlower(canvas.width/2 + 60, baseY + 100, open*0.8);
+/* PETAL SHADER */
+const petalMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    color: { value: new THREE.Color(0xffe3ef) }
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main(){
+      vUv = uv;
+      vec3 pos = position;
+      pos.z += sin(uv.y * 3.1415) * 0.2;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.0);
     }
-  }
+  `,
+  fragmentShader: `
+    uniform vec3 color;
+    varying vec2 vUv;
+    void main(){
+      float alpha = smoothstep(0.0, 0.3, vUv.y) * (1.0 - vUv.y);
+      gl_FragColor = vec4(color, alpha);
+    }
+  `,
+  transparent: true,
+  side: THREE.DoubleSide
+});
 
-  requestAnimationFrame(animate);
+/* BLOOM */
+const bloomGroup = new THREE.Group();
+bloomGroup.position.y = 4.3;
+flower.add(bloomGroup);
+
+const petals = [];
+const count = 11;
+
+for(let i=0;i<count;i++){
+  const geo = new THREE.PlaneGeometry(1.7, 3.5, 20, 40);
+  geo.translate(0,1.75,0);
+  const petal = new THREE.Mesh(geo, petalMaterial);
+  petal.rotation.y = (i/count) * Math.PI * 2;
+  petal.rotation.x = Math.PI/2.3;
+  petal.scale.set(0.001,0.001,0.001);
+  bloomGroup.add(petal);
+  petals.push(petal);
 }
 
-function start() {
-  document.getElementById("intro").style.display = "none";
-  started = true;
+/* ANIMATION */
+let start = false;
+let rise = 0;
+let open = 0;
+
+document.getElementById("overlay").onclick = () => {
+  start = true;
+  overlay.classList.add("hide");
+};
+
+function animate(){
+  requestAnimationFrame(animate);
+
+  if(start){
+    rise = Math.min(rise + 0.01, 1);
+    open = Math.min(open + 0.012, 1);
+
+    flower.position.y = -4 + rise * 4;
+
+    petals.forEach(p=>{
+      const s = 0.8 + open * 1.8;
+      p.scale.set(s,s,s);
+      p.rotation.x = Math.PI/2.3 - open * 1.1;
+    });
+
+    camera.position.y = 2.5 + open * 0.9;
+    camera.lookAt(0,4,0);
+  }
+
+  composer.render();
 }
 
 animate();
-</script>
 
+window.addEventListener("resize", ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+});
+</script>
 </body>
 </html>
